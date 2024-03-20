@@ -1,0 +1,18 @@
+{
+  "name": "restapis",
+  "version": "1.0.0",
+  "description": "project-01 runner",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ashesbloom"
+  },
+  "author": "mayank_pandey",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.0"
+  }
+}
