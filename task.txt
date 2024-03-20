@@ -1,0 +1,16 @@
+rest api - json
+
+GET/api/user -> list all user in json [done :)]
+
+GET/user -> list user name [done :)]
+
+GET/user/id -> list of given id [data :)]
+
+POST/user -> create a new user
+
+PATCH/user/id -> edit user's entries
+
+DELETE/user/id -> remove the user
+
+
+
