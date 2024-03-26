@@ -1,3 +1,4 @@
+// visit https://developer.mozilla.org/en-US/docs/Web/HTTP/Status for the understanding of the status code
 const http = require('http');
 const port = 8000;
 const fs = require('fs');
@@ -39,12 +40,16 @@ app.get('/user',(req,res)=>{
 app.post('/api/user',(req,res)=>{
     //creating user
     const body = req.body; //data sent by the client get is stored in body
-    console.log('User added\n'+body); //printing the data sent by the client 
+    // handling bad request 400
+    if(!body.first_name || !body.last_name || !body.email){
+        return res.status(400).json('All fields are required');
+    }
+    console.log(body); //printing the data sent by the client 
     //but to understand the data we have to use middleware called urlencoded to change the data into json object
     data.push({id: data.length + 1,...body});  //pushing the body with the previous data
     fs.writeFile("./MOCK_DATA.json",JSON.stringify(data),(err,pass)=>{ //rewritting new body pushed file with the old one 
         //avoid using appendfile to eliminate any duplicate entries
-        return res.json(`Your data have be added id:${data.length}`);
+        return res.status(201).json(`Your data have be added id:${data.length}`);
     });
     
 })
@@ -57,6 +62,8 @@ app.route('/user/:id') //as, here pathname for GET,PATCH,DELETE is same so we wi
     .get((req,res)=>{
         const id = Number(req.params.id); // calling the parameter id(pathname request by a client) and convert it to a number 
         const user = data.find((user_id)=>user_id.id===id); // finding the user by id
+        // handling not found 404
+        if(!user) return res.status(404).json('User not found');
         return res.json(user);
     })
     .patch((req,res)=>{
@@ -73,3 +80,15 @@ app.route('/user/:id') //as, here pathname for GET,PATCH,DELETE is same so we wi
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+
+
+//status code
+/* 
+
+    Informational responses (100 – 199)
+    Successful responses (200 – 299)
+    Redirection messages (300 – 399)
+    Client error responses (400 – 499)
+    Server error responses (500 – 599)
+
+*/
