@@ -5,9 +5,24 @@ const express = require('express');
 const app = express();
 // using a website called https://mockaroo.com/ to get the scrap data
 const data = require('./MOCK_DATA.json');
+const { time } = require('console');
 
 //middleware - plugin
 app.use(express.urlencoded({extended:false})) //this middleware will convert the data sent by the client into json object
+
+app.use((req,res,next) => {
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+    const log =  `Request made at: ${date}|${time}||${req.method}-${req.url}`;
+    fs.appendFile('log.txt',log+'\n',(err,pass)=>{
+        if(err){
+            console.log(err);
+        }else{
+            console.log('log added at '+date+' '+time);
+            next();
+        }
+    })
+})
 
 app.get('/api/user',(req,res) => {
     return res.json(data);
@@ -24,7 +39,7 @@ app.get('/user',(req,res)=>{
 app.post('/api/user',(req,res)=>{
     //creating user
     const body = req.body; //data sent by the client get is stored in body
-    console.log(body); //printing the data sent by the client 
+    console.log('User added\n'+body); //printing the data sent by the client 
     //but to understand the data we have to use middleware called urlencoded to change the data into json object
     data.push({id: data.length + 1,...body});  //pushing the body with the previous data
     fs.writeFile("./MOCK_DATA.json",JSON.stringify(data),(err,pass)=>{ //rewritting new body pushed file with the old one 

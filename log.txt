@@ -1,0 +1,10 @@
+Request made at :27/3/2024|1:52:14 am||GET-/user
+Request made at :27/3/2024|1:52:22 am||GET-/api/user
+Request made at :27/3/2024|1:52:35 am||GET-/api/user/1001
+Request made at :27/3/2024|1:52:42 am||GET-/api/user/10
+Request made at :27/3/2024|1:52:50 am||GET-/user/12
+Request made at :27/3/2024|1:52:53 am||GET-/user/1001
+Request made at :27/3/2024|1:53:40 am||POST-/api/user
+Request made at :27/3/2024|1:53:50 am||GET-/user/1002
+Request made at :27/3/2024|1:54:03 am||GET-/about
+Request made at: 27/3/2024|1:56:51 am||GET-/user/1002
