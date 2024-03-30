@@ -4,9 +4,46 @@ const port = 8000;
 const fs = require('fs');
 const express = require('express');
 const app = express();
-// using a website called https://mockaroo.com/ to get the scrap data
-const data = require('./MOCK_DATA.json');
+// we can use a website called https://mockaroo.com/ to get the scrap data
+// const data = require('./MOCK_DATA.json');
+//but here we creating our own database using mongodb services
 const { time } = require('console');
+const mongo = require('mongoose');
+const { type } = require('os');
+const { create } = require('domain');
+
+//connecting database
+mongo.connect('mongodb://127.0.0.1:27017/servertesting-1')
+    .then(()=>{console.log("Database connected")})
+    .catch((err) => {console.log("mongo error",err)});
+
+//schema
+const userschema = new mongo.Schema({
+    firstname:{
+        type:String,
+        require : true
+    },
+    lastname:{
+        type:String,
+        require: false
+    },
+    email:{
+        type:String,
+        require:true,
+        unique:true
+    },
+    gender:{
+        type:String,
+        require:true
+    }
+},
+{timestamps:true} // to add timestamp in our database
+);
+
+//creating model
+const user = mongo.model('user',userschema);
+//using this user object we can perform CURD operations
+
 
 //middleware - plugin
 app.use(express.urlencoded({extended:false})) //this middleware will convert the data sent by the client into json object
@@ -15,7 +52,7 @@ app.use((req,res,next) => {
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString();
     const log =  `Request made at: ${date}|${time}||${req.method}-${req.url}`;
-    fs.appendFile('log.txt',log+'\n',(err,pass)=>{
+    fs.appendFile('log.txt',log+'\n',(err)=>{
         if(err){
             console.log(err);
         }else{
@@ -25,33 +62,47 @@ app.use((req,res,next) => {
     })
 })
 
-app.get('/api/user',(req,res) => {
-    return res.json(data);
+app.get('/api/user',async(req,res) => {
+    const alldbdata = await user.find({});
+    return res.json(alldbdata);
 })
-app.get('/user',(req,res)=>{
+app.get('/user',async(req,res)=>{
+    const alldbdata = await user.find({});
     const html = `<ul>
-    ${data.map((user)=>`<li>${user.first_name}</li>`).join('')}
+    ${alldbdata.map((user)=>`<li>name: ${user.firstname} | email: ${user.email} </li>`).join('')}
     </ul>`
     return res.send(html);
 })
 
 //using postman api to testout client request
 
-app.post('/api/user',(req,res)=>{
+app.post('/api/user', async(req,res)=>{
     //creating user
     const body = req.body; //data sent by the client get is stored in body
     // handling bad request 400
-    if(!body.first_name || !body.last_name || !body.email){
+    if(!body||!body.first_name || !body.last_name || !body.email){
         return res.status(400).json('All fields are required');
     }
-    console.log(body); //printing the data sent by the client 
-    //but to understand the data we have to use middleware called urlencoded to change the data into json object
-    data.push({id: data.length + 1,...body});  //pushing the body with the previous data
-    fs.writeFile("./MOCK_DATA.json",JSON.stringify(data),(err,pass)=>{ //rewritting new body pushed file with the old one 
-        //avoid using appendfile to eliminate any duplicate entries
-        return res.status(201).json(`Your data have be added id:${data.length}`);
-    });
+
+    //this is the way to add data to the database in the form of local-file[log.txt]
+
+    // console.log(body); //printing the data sent by the client 
+    // //but to understand the data we have to use middleware called urlencoded to change the data into json object
+    // data.push({id: data.length + 1,...body});  //pushing the body with the previous data
+    // fs.writeFile("./MOCK_DATA.json",JSON.stringify(data),(err,pass)=>{ //rewritting new body pushed file with the old one 
+    //     //avoid using appendfile to eliminate any duplicate entries
+    //     return res.status(201).json(`Your data have be added id:${data.length}`);
+    // });
     
+    //adding data to the database
+    const created_user = await user.create({
+        firstname: body.first_name,
+        lastname: body.last_name,
+        email: body.email,
+        gender: body.gender
+    });
+    console.log(created_user);
+    return res.status(201).json({msg:"success"}); 
 })
 
 /*
@@ -59,20 +110,26 @@ app.post('/api/user',(req,res)=>{
  GET /user/:id (we can achive that by using make dynamic variable {:id})
  */
 app.route('/user/:id') //as, here pathname for GET,PATCH,DELETE is same so we will group the pathname together using route
-    .get((req,res)=>{
-        const id = Number(req.params.id); // calling the parameter id(pathname request by a client) and convert it to a number 
-        const user = data.find((user_id)=>user_id.id===id); // finding the user by id
+    .get( async(req,res)=>{
+
+        //finding user using id in scrap data[MOCK_DATA.json]
+        
+        // const id = Number(req.params.id); // calling the parameter id(pathname request by a client) and convert it to a number 
+        // const user = data.find((user_id)=>user_id.id===id); // finding the user by id
+
+        //finding user using id in our database
+        const user_id = await user.findById(req.params.id);
         // handling not found 404
-        if(!user) return res.status(404).json('User not found');
-        return res.json(user);
+        if(!user_id) return res.status(404).json('User not found');
+        return res.json(user_id);
     })
     .patch((req,res)=>{
         //edit user
         return res.json({status:'Pending...'});    
     })
-    .delete((req,res)=>{
-        //remove user
-        return res.json({status:'Pending...'});    
+    .delete( async(req,res)=>{
+        await user.findByIdAndDelete(req.params.id)
+        return res.json({msg:'User Successfully deleted'});    
     })
 
 
@@ -84,11 +141,9 @@ app.listen(port, () => {
 
 //status code
 /* 
-
     Informational responses (100 – 199)
     Successful responses (200 – 299)
     Redirection messages (300 – 399)
     Client error responses (400 – 499)
     Server error responses (500 – 599)
-
 */
