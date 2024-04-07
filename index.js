@@ -30,7 +30,7 @@ const userschema = new mongo.Schema({
     email:{
         type:String,
         require:true,
-        unique:true
+        unique:true,
     },
     gender:{
         type:String,
@@ -102,7 +102,8 @@ app.post('/api/user', async(req,res)=>{
         gender: body.gender
     });
     console.log(created_user);
-    return res.status(201).json({msg:"success"}); 
+    return res.status(201).json({msg: "User Successfully created", name: created_user.firstname});
+    
 })
 
 /*
@@ -123,15 +124,23 @@ app.route('/user/:id') //as, here pathname for GET,PATCH,DELETE is same so we wi
         if(!user_id) return res.status(404).json('User not found');
         return res.json(user_id);
     })
-    .patch((req,res)=>{
-        //edit user
-        return res.json({status:'Pending...'});    
+    .patch(async(req,res)=>{
+        body = req.body;
+        const user_id = await user.findById(req.params.id);
+        if(!user_id) return res.status(404).json('User not found');
+        const updated_user = await user.findByIdAndUpdate(user_id,{
+            firstname: body.first_name || user_id.firstname,
+            lastname: body.last_name || user_id.lastname,
+            email: body.email || user_id.email,
+            gender: body.gender || user_id.gender
+        })
+        if(!updated_user) return res.status(500).json('User not updated');
+        return res.json({msg:'User Successfully updated'});
     })
     .delete( async(req,res)=>{
-        await user.findByIdAndDelete(req.params.id)
+        await user.findByIdAndDelete(req.params.id) 
         return res.json({msg:'User Successfully deleted'});    
     })
-
 
 
 app.listen(port, () => {
