@@ -1,16 +1,18 @@
-rest api - json
+rest api - MongoDB 
+
+create a log file for server [Done :)]
 
 GET/api/user -> list all user in json [done :)]
 
 GET/user -> list user name [done :)]
 
-GET/user/id -> list of given id [data :)]
+GET/user/id -> list user, of given id [Done :)]
 
-POST/user -> create a new user
+POST/user -> create a new user [Done :)]
 
-PATCH/user/id -> edit user's entries
+PATCH/user/id -> edit user's credentials 
 
-DELETE/user/id -> remove the user
+DELETE/user/id -> remove the user [Done :)]
 
 
 
