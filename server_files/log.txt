@@ -101,3 +101,8 @@ Request made at: 7/4/2024|6:57:28 pm||PATCH-/user/6607857326b36d6c30089cdf
 Request made at: 7/4/2024|6:59:32 pm||PATCH-/user/6607857326b36d6c30089cdc
 Request made at: 7/4/2024|6:59:41 pm||PATCH-/user/6607857326b36d6c30089cdf
 Request made at: 7/4/2024|6:59:45 pm||GET-/api/user
+Request made at: 7/4/2024|11:27:38 pm||GET-/user
+Request made at: 7/4/2024|11:32:27 pm||GET-/user
+Request made at: 7/4/2024|11:33:10 pm||GET-/user
+Request made at: 7/4/2024|11:33:36 pm||GET-/user
+Request made at: 7/4/2024|11:34:45 pm||GET-/user

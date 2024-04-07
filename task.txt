@@ -1,4 +1,6 @@
-rest api - MongoDB 
+##Rest api - MongoDB 
+
+use express for routes [Done ;)]
 
 create a log file for server [Done :)]
 
@@ -14,5 +16,10 @@ PATCH/user/id -> edit user's credentials [Done :)]
 
 DELETE/user/id -> remove the user [Done :)]
 
+use MongoDB for storing data [Done :)]
 
+apply validation for user data [Done :)]
 
+apply status code for each request [Done :)]
+
+Use MVC architecture [Done :)]
