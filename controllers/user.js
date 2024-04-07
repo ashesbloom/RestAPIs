@@ -39,7 +39,7 @@ async function handdleCreateUser(req,res){ //this function will post the data to
         gender: body.gender
     });
     console.log(created_user);
-    return res.status(201).json({msg: "User Successfully created", name: created_user._id});
+    return res.status(201).json({msg: "User Successfully created", ID: created_user._id});
 }
 
 async function handdleGetUserByID(req,res){ //this function will get the user by id from the database
