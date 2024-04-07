@@ -10,7 +10,7 @@ GET/user/id -> list user, of given id [Done :)]
 
 POST/user -> create a new user [Done :)]
 
-PATCH/user/id -> edit user's credentials 
+PATCH/user/id -> edit user's credentials [Done :)]
 
 DELETE/user/id -> remove the user [Done :)]
 
